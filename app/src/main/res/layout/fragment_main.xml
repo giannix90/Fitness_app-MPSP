@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="match_parent"
+    android:layout_height="600dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="600dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.gianni.mpsp.FragmentOne">
+
+    <com.robinhood.ticker.TickerView
+        android:id="@+id/tickerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true"
+        app:ticker_animationDuration="500"/>
+    />
+
+    <com.hookedonplay.decoviewlib.DecoView
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:id="@+id/dynamicArcView"
+        android:layout_centerHorizontal="true"
+        custom:dv_arc_gravity_horizontal="Fill"
+        custom:dv_arc_gravity_vertical="Top"
+        android:layout_margin="8dp"/>
+
+    <com.ohoussein.playpause.PlayPauseView
+        android:id="@+id/play_pause_view"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginLeft="290dp"
+        android:clickable="true"
+        android:foreground="?android:selectableItemBackground"
+        app:fill_color="#e1e1e1"
+        app:pause_bg="#00a2ed"
+        app:play_bg="@color/colorPrimary" />
+
+    <TextView
+        android:id="@+id/dist"
+        android:text="Distance: "
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="200dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/label"
+        android:text="Passi Giornalieri:"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.robinhood.ticker.TickerView
+        android:id="@+id/km"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="220dp"
+        app:ticker_animationDuration="500"/>
+
+    <TextView
+        android:id="@+id/steptotal"
+        android:text="/6000"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="125dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.dexafree.materialList.view.MaterialListView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/material_listview"
+        android:layout_marginTop="250dp"/>
+
+    <com.dexafree.materialList.view.MaterialListView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:id="@+id/calorieswalking"
+        android:layout_marginTop="420dp"/>
+
+
+</RelativeLayout>
+</ScrollView>

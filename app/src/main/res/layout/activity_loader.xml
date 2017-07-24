@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/lib/com.example.gianni.mpsp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.github.jlmd.animatedcircleloadingview.AnimatedCircleLoadingView
+        xmlns:app="http://schemas.android.com/apk/lib/com.example.gianni.mpsp"
+        android:id="@+id/circle_loading_view"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="150dp"
+        android:layout_gravity="center_horizontal"
+        app:animCircleLoadingView_mainColor="@color/orange"
+        app:animCircleLoadingView_secondaryColor="@color/colorPrimary"
+        app:animCircleLoadingView_textColor="@color/red"
+        />
+
+</LinearLayout>

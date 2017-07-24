@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <com.github.florent37.materialtextfield.MaterialTextField
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:mtf_cardCollapsedHeight="4dp"
+        app:mtf_animationDuration="500"
+        app:mtf_labelColor="@android:color/holo_red_dark"
+        app:mtf_openKeyboardOnFocus="true"
+        app:mtf_image="@drawable/common_google_signin_btn_icon_light"
+        >
+        <EditText
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/name"
+            android:hint="Name"
+            android:textColor="#333"
+            android:textColorHint="#666"
+            android:textSize="15sp"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="20dp"/>
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="20dp"
+            android:text="User Information"
+            android:layout_marginTop="92dp"/>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"
+            android:layout_marginTop="100dp"
+            android:layout_marginLeft="110dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:foregroundGravity="center"
+            android:id="@+id/name_view"
+            android:gravity="center"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="0dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="12pt"
+            android:text="Gianni"/>
+
+
+
+
+
+        <com.dd.CircularProgressButton
+            android:id="@+id/age"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="200dp"
+            android:textColor="#26221f"
+            android:textSize="18sp"
+            app:cpb_iconComplete="@drawable/ic_check"
+            app:cpb_selectorIdle="@drawable/idle_state_selector2"
+            app:cpb_selectorComplete="@drawable/complete_state_selector"
+            app:cpb_textComplete="OK"
+            app:cpb_textError="Error"
+            app:cpb_textIdle="Age"
+            app:cpb_cornerRadius="48dp"/>
+
+        <com.dd.CircularProgressButton
+            android:id="@+id/gender"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="200dp"
+            android:layout_marginLeft="160dp"
+            android:textColor="#26221f"
+            android:textSize="18sp"
+            app:cpb_iconComplete="@drawable/ic_check"
+            app:cpb_selectorIdle="@drawable/idle_state_selector2"
+            app:cpb_selectorComplete="@drawable/complete_state_selector"
+            app:cpb_textComplete="OK"
+            app:cpb_textError="Error"
+            app:cpb_textIdle="Male"
+            app:cpb_cornerRadius="48dp"/>
+
+
+        <com.dd.CircularProgressButton
+            android:id="@+id/height"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="270dp"
+            android:textColor="#26221f"
+            android:textSize="18sp"
+            app:cpb_iconComplete="@drawable/ic_check"
+            app:cpb_selectorIdle="@drawable/idle_state_selector2"
+            app:cpb_selectorComplete="@drawable/complete_state_selector"
+            app:cpb_textComplete="OK"
+            app:cpb_textError="Error"
+            app:cpb_textIdle="height"
+            app:cpb_cornerRadius="48dp"/>
+
+        <com.dd.CircularProgressButton
+            android:id="@+id/weight"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="270dp"
+            android:layout_marginLeft="160dp"
+            android:textColor="#26221f"
+            android:textSize="18sp"
+            app:cpb_iconComplete="@drawable/ic_check"
+            app:cpb_selectorIdle="@drawable/idle_state_selector2"
+            app:cpb_selectorComplete="@drawable/complete_state_selector"
+            app:cpb_textComplete="OK"
+            app:cpb_textError="Error"
+            app:cpb_textIdle="weight"
+            app:cpb_cornerRadius="48dp"/>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"
+            android:layout_marginTop="350dp"
+            android:layout_marginLeft="0dp"/>
+
+    </com.github.florent37.materialtextfield.MaterialTextField>
+    <com.dd.CircularProgressButton
+        android:id="@+id/btnWithText"
+        android:layout_width="196dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="18sp"
+        app:cpb_iconComplete="@drawable/ic_check"
+        app:cpb_selectorIdle="@drawable/idle_state_selector"
+        app:cpb_selectorComplete="@drawable/complete_state_selector"
+        app:cpb_textComplete="OK"
+        app:cpb_textError="Error"
+        app:cpb_textIdle="Confirm"
+        app:cpb_cornerRadius="48dp"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginLeft="0dp"/>
+
+</LinearLayout>

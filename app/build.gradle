@@ -1,0 +1,47 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.0"
+    defaultConfig {
+        applicationId "com.example.gianni.mpsp"
+        minSdkVersion 22
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    useLibrary 'org.apache.http.legacy'
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:26.+'
+    compile 'com.android.support:design:26.+'
+    compile 'com.google.android.gms:play-services:8.4.0'
+    compile 'im.dacer:AndroidCharts:1.0.3'
+    compile 'com.github.bmarrdev:android-DecoView-charting:v1.2'
+    compile 'com.klinkerapps:sliding-activity:1.4.4'
+    compile 'com.github.florent37:materialtextfield:1.0.7'
+    compile ('com.github.dexafree:materiallist:3.2.1'){
+        transitive=true
+    }
+    compile 'com.robinhood.ticker:ticker:1.2.0'
+    compile 'com.github.jlmd:AnimatedCircleLoadingView:1.1.5@aar'
+    compile 'com.github.dmytrodanylyk.circular-progress-button:library:1.1.3'
+    compile 'com.github.ohoussein.playpauseview:playpauseview:1.0.0'
+    compile 'com.github.blackfizz:eazegraph:1.2.2@aar'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.github.lecho:hellocharts-android:v1.5.8'
+    compile files('libs/weka.jar')
+    testCompile 'junit:junit:4.12'
+}
