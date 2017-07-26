@@ -13,19 +13,19 @@ import weka.core.converters.ConverterUtils;
  * Created by gianni on 11/07/17.
  */
 
-public class RandomForestClassifier {
+public class ActivityBayesianNetworkClassifier {
 
-    public RandomForestClassifier(){
+    public ActivityBayesianNetworkClassifier(){
 
     }
 
-    public String classify(){
+    public synchronized String classify(){
         //load model
         String rootPath= Environment.getExternalStorageDirectory() + File.separator + "RandomForestClassifier" + File.separator;
         Classifier cls = null;
         try {
             //I load the random forest classifier previously created through Weka
-            cls = (Classifier) weka.core.SerializationHelper.read(rootPath+"RandomForest.model");
+            cls = (Classifier) weka.core.SerializationHelper.read(rootPath+"ActivitiesBayesianNetwork.model");
         } catch (Exception e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -33,7 +33,7 @@ public class RandomForestClassifier {
 
         ConverterUtils.DataSource source1 = null;
         try {
-            source1 = new ConverterUtils.DataSource(rootPath+"weather.numeric.arff");
+            source1 = new ConverterUtils.DataSource(rootPath+"ActivitiesTrainingSet.arff");
         } catch (Exception e2) {
             // TODO Auto-generated catch block
             e2.printStackTrace();
@@ -54,7 +54,7 @@ public class RandomForestClassifier {
         Instances test = null;
         ConverterUtils.DataSource source2 = null;
         try {
-            source2 = new ConverterUtils.DataSource(rootPath+"predict.arff");
+            source2 = new ConverterUtils.DataSource(rootPath+"ActivityInstancy.arff");
         } catch (Exception e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -86,6 +86,6 @@ public class RandomForestClassifier {
 
         Log.e("Classifier: ",prediction);
 
-        return null;
+        return prediction;
     }
 }

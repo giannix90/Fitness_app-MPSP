@@ -19,7 +19,7 @@ public class CaloriesRandomForestClassifier {
 
     }
 
-    public double classify(){
+    public synchronized double classify(){
         //load model
         String rootPath= Environment.getExternalStorageDirectory() + File.separator + "RandomForestClassifier" + File.separator;
         Classifier cls = null;

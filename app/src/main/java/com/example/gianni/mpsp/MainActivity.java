@@ -193,9 +193,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "TAB 1";
+                    return "My Fit";
                 case 1:
-                    return "TAB 2";
+                    return "My Info";
 
             }
             return null;

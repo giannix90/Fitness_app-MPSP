@@ -3,12 +3,14 @@ package com.example.gianni.mpsp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -16,8 +18,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.NumberPicker;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.dd.CircularProgressButton;
+import com.dexafree.materialList.card.Card;
+import com.dexafree.materialList.card.CardProvider;
+import com.dexafree.materialList.view.MaterialListView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -35,6 +45,9 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.w3c.dom.Document;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +80,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationManager mLocationManager;
     private GoogleMap googleMap;
     private String serverKey = "AIzaSyAiPheorSRX4C1LpYI5lyiVz9IY77LWjBQ";
+    private CircularProgressButton mCircularProgressButton;
+    private NumberPicker mMeters;
+    private NumberPicker mKmeters;
+    private CaloriesRandomForestClassifier mCaloriesRandomForestClassifier;
+    private GlobalVariables mGlobalVariables;
+    private MaterialListView mInfoMaps;
+    private int mStimatedTime;
 
 
     @Override
@@ -80,6 +100,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mLatlng = (TextView) findViewById(R.id.latlng);
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        mGlobalVariables=new SingletonGlobalVariables().getSingleton();
+
+        //To classify the calories
+        mCaloriesRandomForestClassifier=new CaloriesRandomForestClassifier();
+
+
+        //Pointer to the buttons
+        mCircularProgressButton=(CircularProgressButton) findViewById(R.id.okMap);
+        mMeters=(NumberPicker) findViewById(R.id.mPick);
+        mKmeters=(NumberPicker) findViewById(R.id.KmPick);
+        mMeters.setMaxValue(9);
+        mMeters.setMinValue(0);
+        mKmeters.setMaxValue(50);
+        mKmeters.setMinValue(0);
+        mKmeters.setValue(1);
+
+        mInfoMaps=(MaterialListView) findViewById(R.id.infoMaps);
+        mInfoMaps.getAdapter().add(new Card.Builder(mContext)
+                .withProvider(new CardProvider())
+                .setLayout(R.layout.material_small_image_card)
+                .setTitle("Info about the path")
+                .setDescription("-Number of Steps: "+"\n\n-Estimated Time"+"\n\n- Address: "+"\n\n-Calories estimated: ")
+                .endConfig()
+                .build()
+        );
 
         //I permit to perform Network operation on Main thread
         int SDK_INT = android.os.Build.VERSION.SDK_INT;
@@ -98,8 +144,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // no need to set a color here, palette will generate colors for us to be set
         // setImage(R.drawable.fitness_tracker_guide_cover_2);
 
-// Gets the MapView from the XML layout and creates it
+
+        // Gets the MapView from the XML layout and creates it
         mapView = (MapView) findViewById(R.id.mapview);
+
         mapView.onCreate(savedInstanceState);
 
         //Call onMapReady
@@ -118,6 +166,74 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         LatLng sydney = new LatLng(-33.867, 151.206);
 
+        //Prepare the listener for the button
+        mCircularProgressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                mCircularProgressButton.setIndeterminateProgressMode(true); // turn on indeterminate progress
+                mCircularProgressButton.setProgress(50); // set progress > 0 & < 100 to display indeterminate progress
+                new Thread(new Runnable() {
+
+                    //Launch new thread in order to don't stop the main thread
+                    @Override
+                    public void run() {
+                        try {
+                            sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //Must be runned on main thread
+                                mCircularProgressButton.setProgress(100);
+                                mCircularProgressButton.setProgress(0);
+                                int totMeters=(mKmeters.getValue()*1000)+(mMeters.getValue()*100);
+                                LatLng arrive=putArriveOnCircle(totMeters);//I obtain the coordinates to new arrive
+                                String address=drawPoly(totMeters,arrive);//plot path to arrive of fixed length
+                                mCircularProgressButton.setIndeterminateProgressMode(true); // turn on indeterminate progress
+                                //Prepare the input instance for the random forest classifier
+                                FileWriter fw= null;
+                                try {
+                                    fw = new FileWriter(Environment.getExternalStorageDirectory() + File.separator + "RandomForestClassifier" + File.separator + "CalorieInstancy" + ".arff",false);
+                                    fw.write("@relation whatever\n"+
+
+                                            "@attribute Passi numeric\n"+
+                                            "@attribute Distanza numeric\n"+
+                                            "@attribute Calorieattività numeric\n\n"+
+
+
+                                            "@data\n"+(int)getStepTowalk(totMeters)+" ,"+totMeters+" , ?");
+                                    fw.flush();
+                                    fw.close();
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                                double calories=mCaloriesRandomForestClassifier.classify();
+
+                                mInfoMaps.getAdapter().clearAll();
+                                mInfoMaps.getAdapter().add(new Card.Builder(mContext)
+                                        .withProvider(new CardProvider())
+                                        .setLayout(R.layout.material_small_image_card)
+                                        .setTitle("Info about the path")
+                                        .setDescription("-Number of Steps: "+(int)getStepTowalk(totMeters)+"\n\n-Estimated Time: "+mStimatedTime/60+" min"+"\n\n- Address: "+address+"\n\n-Calories estimated: "+new DecimalFormat("##.##").format(calories)+ " KCal")
+                                        .endConfig()
+                                        .build()
+                                );
+
+                            }
+                        });
+
+                    }
+                }).start();
+
+            }
+        });
+
 
         try {
             map.setMyLocationEnabled(true);
@@ -131,11 +247,43 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    private double getStepTowalk(int meters){
+        int step=0;
+        Cursor mUser=mGlobalVariables.getmDBHelper().getUser();
+        if(mUser!=null) {
+            mUser.moveToNext();
+            //Get the value from the record
+            int mHeight = mUser.getInt(mUser.getColumnIndex(fitnessDB.User.HEIGHT));
 
-    private void drawPoly(int distance){
+            if(mUser.getString(mUser.getColumnIndex(fitnessDB.User.GENDER)).compareTo("Man")==0){
+
+                step=(int)((double)meters/(((double)mHeight*0.415)/(double) 100));
+
+            }else{
+                step=(int)((double)meters/(((double)mHeight*0.413)/(double) 100));
+
+            }
+        }
+        return step;
+    }
+
+    private LatLng putArriveOnCircle(int r){
+        //this function put momentanely the arrive on a random position on a circle of radius r
+        double radius=(double)(r/(double)111303);
+        double theta=Math.random()*360;//between 0 and 360
+        LatLng mArrive1=new LatLng(mPosition.latitude+(radius*Math.sin(Math.toRadians(theta)))+0.1,mPosition.longitude+(radius*Math.cos(Math.toRadians(theta)))+0.1);
+        Log.e("Maps Activity","mArrive: "+mArrive1.latitude+" , "+mArrive1.longitude);
+        return mArrive1;
+    }
+
+
+    private String drawPoly(int distance,LatLng arrive){
         //This function print a path of given length between 2 point
+        Document d=null;
         try{
-            Document d=md.getDocument(mPosition, mArrive,GMapV2Direction.MODE_WALKING);
+            map.clear();
+
+            d=md.getDocument(mPosition, arrive,GMapV2Direction.MODE_WALKING);
 
 
             ArrayList<LatLng> directionPoint = md.getDirection(d);
@@ -159,15 +307,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 dist+=a.distanceTo(b);
 
-                if(dist>=distance){
-                    rectLine.add(mArrive=directionPoint.get(i+1));
+                if(dist>=distance && distance!=0){
+                    rectLine.add(arrive=directionPoint.get(i+1));
                     break;
                 }
             }
             //mArrive= directionPoint.get(i+1);
             Polyline polylin = map.addPolyline(rectLine);
 
-            d=md.getDocument(mPosition, mArrive,GMapV2Direction.MODE_WALKING);
+            d=md.getDocument(mPosition, arrive,GMapV2Direction.MODE_WALKING);
+
 
             map.addMarker(new MarkerOptions()
                     .title("Start")
@@ -175,9 +324,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .position(mPosition));
             map.addMarker(new MarkerOptions()
                     .title("Arrive")
-                    .snippet("You have to arrive here, distance: "+md.getDistanceValue(d)+"meters  Time: "+md.getDurationText(d))
-                    .position(mArrive));
+                    .snippet("You have to arrive here, distance: "+md.getDistanceValue(d)+" meters "+"Time:"+md.getDurationValue(d))
+                    .position(arrive));
 
+            //Log.e("Maps Activity","Time:"+md.getDurationValue(d)+" address: "+md.getEndAddress(d));
+            mStimatedTime=md.getDurationValue(d);
 
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(mPosition, 13));
 
@@ -185,6 +336,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }catch (Exception e){
             //map may be null
         }
+        return md.getEndAddress(d);
     }
 
     @Override
@@ -229,10 +381,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             mArrive=new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude()+0.1);
 
-            drawPoly(500);
+            drawPoly(500,mArrive);
         }
 
-        mLatlng.append(""+lat+" , "+lon+"\n");
+
     }
 
     @Override
@@ -249,8 +401,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mArrive=new LatLng(mLastLocation.getLatitude()+0.1,mLastLocation.getLongitude()+0.1);
 
-        //drawPoly();
-        mLatlng.append(""+lat+" , "+lon+"\n");
     }
 
 

@@ -72,11 +72,23 @@ public class GMapV2Direction {
     public int getDurationValue(Document doc) {
         try {
             NodeList nl1 = doc.getElementsByTagName("duration");
-            Node node1 = nl1.item(0);
+
+            ArrayList<Node> list=new ArrayList<>();
+            for (int i =0;i<nl1.getLength() - 1;i++){
+                list.add(nl1.item(i));
+            }
+            Node node1 = null;
+            node1 = nl1.item(nl1.getLength() - 1);
             NodeList nl2 = node1.getChildNodes();
             Node node2 = nl2.item(getNodeIndex(nl2, "value"));
+            int time=0;
+            for(Node n:list){
+                nl2 = n.getChildNodes();
+                node2 = nl2.item(getNodeIndex(nl2, "value"));
+                time+=Integer.parseInt(node2.getTextContent());
+            }
             Log.i("DurationValue", node2.getTextContent());
-            return Integer.parseInt(node2.getTextContent());
+            return time;
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
@@ -123,6 +135,7 @@ public class GMapV2Direction {
             node1 = nl1.item(nl1.getLength() - 1);
             NodeList nl2 = node1.getChildNodes();
             Node node2 = nl2.item(getNodeIndex(nl2, "value"));
+
             Log.i("DistanceValue", node2.getTextContent());
             return Integer.parseInt(node2.getTextContent());
         } catch (Exception e) {
@@ -218,6 +231,20 @@ public class GMapV2Direction {
                 return i;
         }
         return -1;
+    }
+
+
+    private ArrayList<Node> getNodes(NodeList nl, String nodename) {
+        ArrayList<Node> ret=new ArrayList<>();
+        for (int i = 0; i < nl.getLength(); i++) {
+            if (nl.item(i).getNodeName().equals(nodename))
+                ret.add(nl.item(i));
+
+        }
+        if(ret.size()>0)
+            return ret;
+        else
+            return null;
     }
 
     private ArrayList<LatLng> decodePoly(String encoded) {

@@ -19,6 +19,7 @@ import com.dexafree.materialList.card.CardProvider;
 import com.dexafree.materialList.card.OnActionClickListener;
 import com.dexafree.materialList.card.action.TextViewAction;
 import com.dexafree.materialList.view.MaterialListView;
+import com.everseat.textviewlabel.TextViewLabel;
 
 import org.eazegraph.lib.charts.StackedBarChart;
 import org.eazegraph.lib.models.BarModel;
@@ -54,6 +55,7 @@ public class FragmentTwo extends Fragment {
 
     double mBasalMetabolicRate;
     double mCalories;
+    TextViewLabel mTextView;
 
     public FragmentTwo(){
 
@@ -105,12 +107,14 @@ public class FragmentTwo extends Fragment {
 
 
         LayoutInflater factory = LayoutInflater.from(getActivity());
-        View dialogView = factory.inflate(R.layout.furtherinfo_layout,null);
+        final View dialogView = factory.inflate(R.layout.furtherinfo_layout,null);
 
         graphDialog.setContentView(dialogView);
         graphDialog.setTitle("Further Information");
 
         mFurherInfo= dialogView.findViewById(R.id.stackedbarchart);
+
+        mTextView=(TextViewLabel) dialogView.findViewById(R.id.totalcalories);
 
 
         mFurterListView = (MaterialListView) dialogView.findViewById(R.id.furtherinfotab);
@@ -163,12 +167,15 @@ public class FragmentTwo extends Fragment {
                                                 s1.addBar(new BarModel((float) ((int)mCalories), 0xFF63CBB0));
                                                 s1.setShowLabel(true);
 
+                                                mTextView.setText("Total Calories= "+(int)(mBasalMetabolicRate+getTID(mCalories,mBasalMetabolicRate)+mCalories)+" KCal");
+
                                                 mFurherInfo.clearChart();
                                                 mFurherInfo.addBar(s1);
                                                 mFurherInfo.startAnimation();
                                                 graphDialog.show();
 
                                                 mFurherInfo.startAnimation();
+
                                                 }catch(Exception e){
                                                 //Handle error
                                                     Log.e("FragmentOne","Dialog Error");
@@ -204,10 +211,7 @@ public class FragmentTwo extends Fragment {
                         .setListener(new OnActionClickListener() {
                             @Override
                             public void onActionClicked(View view, Card card) {
-                                Log.d("ADDING", "CARD");
 
-
-                                Toast.makeText(getContext(), "Added new card", Toast.LENGTH_SHORT).show();
                             }
                         }))
                 .addAction(R.id.right_text_button, new TextViewAction(getContext())
@@ -219,7 +223,6 @@ public class FragmentTwo extends Fragment {
                                 Intent myIntent = new Intent(getContext(), MapsActivity.class);
                                 myIntent.putExtra("key", value); //Optional parameters
                                 getContext().startActivity(myIntent);
-                                Toast.makeText(getContext(), "You have pressed the right button", Toast.LENGTH_SHORT).show();
                             }
                         }))
                 .endConfig()

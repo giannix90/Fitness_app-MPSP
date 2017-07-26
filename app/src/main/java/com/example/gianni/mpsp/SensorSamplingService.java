@@ -44,6 +44,7 @@ public class SensorSamplingService extends Service
 		void onNewFItBitCalories(double Calories);
 		void onNewKmWalked(double Km);
 		void onNewStepsGroupOfTheDay(int[] mSteps);
+		void onNewActivity(String mActivity);
 	}
 
 	private static FragmentOne fragmentContext;
@@ -69,6 +70,7 @@ public class SensorSamplingService extends Service
 	private static double mCaloriesDuringWalking;
 	private static AtomicInteger mStep;
 	private static int[] mStepDuringDay=new int[24];//24 hours for each day
+	private static String mRecognizedActivity;
 
 	private static int samples = 0;
 	private static float realSamplingFrequency = 0;
@@ -114,7 +116,7 @@ public class SensorSamplingService extends Service
 	GlobalVariables mGlobalVariables;
 
 	CaloriesRandomForestClassifier mCaloriesRandomForestClassifier;//For detect the activity
-
+	ActivityBayesianNetworkClassifier mActivityBayesianNetworkClassifier;
 
 	/*
 	* A Handler allows you to send and process Message and Runnable objects associated with a thread's MessageQueue.
@@ -223,9 +225,9 @@ public class SensorSamplingService extends Service
         double mean=((double) sum)/((double)9);
 
 		//I saturate the Kcal for second to 0.333333 because is the energy spent at 18 km/h running
-        if (mean<0.533333)
+        if (mean<0.313333)
             return mean;
-        else return 0.533333;
+        else return 0.313333;
     }
 
 	private double getKmWalked(){
@@ -444,10 +446,35 @@ public class SensorSamplingService extends Service
 					e.printStackTrace();
 				}
 
-				mCaloriesFitBit=mCaloriesRandomForestClassifier.classify();
+				//I fill activity instance for classification
+				FileWriter fwActivity= null;
+				try {
+					fwActivity = new FileWriter(Environment.getExternalStorageDirectory() + File.separator + "RandomForestClassifier" + File.separator + "ActivityInstancy" + ".arff",false);
+					fwActivity.write("@relation Activities\n" +
+							"\n" +
+							"@attribute running numeric\n" +
+							"@attribute walking numeric\n" +
+							"@attribute biking numeric\n" +
+							"@attribute calories numeric\n" +
+							"@attribute step numeric\n" +
+							"@attribute activity {sedentary, poorlyactive, active, veryactive}\n\n"+
 
-				if(mResult!=null)
+
+							"@data\n"+mGlobalVariables.getRunningDetected()+","+mGlobalVariables.getWalkingDetected()+","+mGlobalVariables.getBikingDetected()+","+(int)mCalories+","+mStep.get()+",?");
+					fwActivity.flush();
+					fwActivity.close();
+
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				mCaloriesFitBit=mCaloriesRandomForestClassifier.classify();
+				mRecognizedActivity=mActivityBayesianNetworkClassifier.classify();
+
+				if(mResult!=null) {
 					mResult.onNewFItBitCalories(mCaloriesFitBit);
+					mResult.onNewActivity(mRecognizedActivity);
+				}
 
 				//Log.e(TAG,"Inserisco i dati dell'Activity of User nel DB");
 
@@ -509,6 +536,7 @@ public class SensorSamplingService extends Service
 
 		mCaloriesRandomForestClassifier=new CaloriesRandomForestClassifier();
 
+		mActivityBayesianNetworkClassifier= new ActivityBayesianNetworkClassifier();
 		/*
 		* 	Initialize periodic thread that write Activity data into DB
 		* */

@@ -69,6 +69,8 @@ public class FragmentOne extends Fragment implements SensorSamplingService.Resul
     BarView stepBarView;
     TickerView tickerView;
     TickerView km;
+    TickerView mTickerActivity;
+
     ArrayList<Integer> stepNumbers;
     ArrayList<String> Stephours;
 
@@ -249,8 +251,10 @@ public class FragmentOne extends Fragment implements SensorSamplingService.Resul
         });
         km = rootView.findViewById(R.id.km);
         km.setCharacterList(TickerUtils.getDefaultNumberList());
-        new RandomForestClassifier().classify();
 
+
+        mTickerActivity=rootView.findViewById(R.id.ticketActivity);
+        mTickerActivity.setCharacterList(TickerUtils.getDefaultNumberList());
 
 
         return rootView;
@@ -275,7 +279,6 @@ public class FragmentOne extends Fragment implements SensorSamplingService.Resul
                         .setLayout(R.layout.material_small_image_card)
                         .setTitle("Chen Euristic EEE Formula")
                         .setDescription("Calories consumed: "+new DecimalFormat("##.##").format(Calories)+" KCal")
-                        .setDrawable(R.drawable.popup_red)
                         .endConfig()
                         .build()
                 );
@@ -370,6 +373,28 @@ public class FragmentOne extends Fragment implements SensorSamplingService.Resul
             }
         });
 
+
+    }
+    @Override
+    public void onNewActivity(final String mActivity){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String currentActivity;
+                if(mActivity.compareTo("sedentary")==0)
+                    currentActivity="Sedentary";
+                else if(mActivity.compareTo("poorlyactive")==0)
+                    currentActivity="Not Very Active";
+                else if(mActivity.compareTo("active")==0)
+                    currentActivity="Active";
+                else if(mActivity.compareTo("veryactive")==0)
+                    currentActivity="Highly Active";
+                else
+                    currentActivity=mActivity;
+
+                mTickerActivity.setText("Current level of Activity: "+currentActivity);
+            }
+        });
 
     }
 

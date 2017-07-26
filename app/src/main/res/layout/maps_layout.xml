@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -7,15 +7,72 @@
     android:weightSum="1">
 
     <com.google.android.gms.maps.MapView android:id="@+id/mapview"
-        android:layout_width="fill_parent"
+        android:layout_width="340dp"
         android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
         android:clickable="true"
+        android:overScrollMode="always"
         android:enabled="true"/>
+    <NumberPicker
+        android:id="@+id/mPick"
+        android:layout_width="40dp"
+        android:layout_height="80dp"
+        android:layout_marginLeft="50dp"
+        android:layout_alignBaseline="@+id/KmPick"
+        android:layout_alignBottom="@+id/KmPick"
+        android:layout_toEndOf="@+id/KmPick"
+        android:layout_marginStart="25dp" />
+    <NumberPicker
+        android:id="@+id/KmPick"
+        android:layout_width="40dp"
+        android:layout_height="80dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="235dp"
+        />
+    <TextView
+        android:layout_width="5dp"
+        android:layout_height="5dp"
+        android:background="@color/black_button"
+        android:textSize="20pt"
+        android:layout_marginTop="290dp"
+        android:layout_marginLeft="54dp" />
+    <TextView
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:text="Km"
+        android:textSize="12pt"
+        android:layout_marginLeft="110dp"
+        android:layout_alignBottom="@+id/okMap"
+        android:layout_toEndOf="@+id/mPick"
+        android:layout_marginStart="18dp" />
+    <com.dd.CircularProgressButton
+        android:id="@+id/okMap"
+        android:layout_width="196dp"
+        android:layout_height="64dp"
+        android:layout_marginLeft="180dp"
+        android:layout_marginTop="235dp"
+        android:layout_gravity="center"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="18sp"
+        app:cpb_iconComplete="@drawable/ic_check"
+        app:cpb_selectorIdle="@drawable/idle_state_selector"
+        app:cpb_selectorComplete="@drawable/complete_state_selector"
+        app:cpb_textComplete="OK"
+        app:cpb_textError="Error"
+        app:cpb_textIdle="Calculate Path"
+        app:cpb_cornerRadius="48dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/latlng"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="500dp"
         />
 
-</LinearLayout>
+    <com.dexafree.materialList.view.MaterialListView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:id="@+id/infoMaps"
+        android:layout_marginTop="320dp"/>
+
+</RelativeLayout>
